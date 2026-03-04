@@ -16,16 +16,22 @@ class DiscordRPC:
         self._last_update_hash = None
 
     def connect(self) -> bool:
-        try:
-            self.rpc = Presence(self.application_id)
-            self.rpc.connect()
-            self._connected = True
-            logger.info("Connected to Discord RPC")
-            return True
-        except Exception as e:
-            logger.error("Failed to connect to Discord: %s", e)
-            self._connected = False
-            return False
+        # Discord allows up to 10 IPC pipe slots (discord-ipc-0 ... discord-ipc-9).
+        # Other presence apps (e.g. music players) may grab slot 0 first.
+        # Iterate until we find a free pipe so we can co-exist with them.
+        for pipe_id in range(10):
+            try:
+                self.rpc = Presence(self.application_id, pipe=pipe_id)
+                self.rpc.connect()
+                self._connected = True
+                logger.info("Connected to Discord RPC on pipe %d", pipe_id)
+                return True
+            except Exception as e:
+                logger.debug("Pipe %d unavailable: %s", pipe_id, e)
+
+        logger.error("Could not connect to Discord on any IPC pipe. Is Discord running?")
+        self._connected = False
+        return False
 
     def disconnect(self) -> None:
         if self.rpc and self._connected:
@@ -87,11 +93,13 @@ class DiscordRPC:
                 p["large_text"] = logo_text
 
             case GamePhase.HIDEOUT:
-                p["details"] = "In the Hideout"
-                p["state"] = f"Playing Solo (1 of 6)"
+                # Use hero-specific hideout flavour text from the API when available
+                # e.g. "Mixing Drinks in the Hideout" for Infernus
+                p["details"] = state.hero_hideout_text
+                p["state"] = "Playing Solo (1 of 6)"
 
             case GamePhase.PARTY_HIDEOUT:
-                p["details"] = "In Party Hideout"
+                p["details"] = state.hero_hideout_text
                 p["state"] = f"Party of {state.party_size}"
 
             case GamePhase.IN_QUEUE:
