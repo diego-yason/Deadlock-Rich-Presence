@@ -1,18 +1,33 @@
-<img width="1700" height="1268" alt="image" src="https://github.com/user-attachments/assets/6d562252-a7e6-44ab-bfeb-8a753469b117" />
+<img width="700" height="768" alt="image" src="https://github.com/user-attachments/assets/6d562252-a7e6-44ab-bfeb-8a753469b117" />
 
-[![pypresence](https://img.shields.io/badge/using-pypresence-00bb88.svg?style=for-the-badge&logo=discord&logoWidth=20)](https://github.com/qwertyquerty/pypresence) ![Platform: Windows](https://img.shields.io/badge/platform-Windows-lightgrey?cacheSeconds=100000) [![SuperCumRat69 on Steam](https://img.shields.io/badge/Steam-SuperCumRat69-blue?logo=Steam)](https://steamcommunity.com/id/supercumrat69/)
+[![pypresence](https://img.shields.io/badge/using-pypresence-00bb88.svg?style=for-the-badge&logo=discord&logoWidth=20)](https://github.com/qwertyquerty/pypresence) ![Platform: Windows & Linux](https://img.shields.io/badge/platform-Windows%20%26%20Linux-lightgrey?cacheSeconds=100000)
 
 
-Discord Rich Presence for Valve's [Deadlock](https://store.steampowered.com/app/1422450/Deadlock/). Python application that shows your current in-game status on your Discord profile (hero, game mode, match type, party size, match timer, etc). NOT FINISHED, so expect bugs !!!!
+Discord Rich Presence for Valve's [Deadlock](https://store.steampowered.com/app/1422450/Deadlock/). Python application that shows your current in-game status on your Discord profile (hero, game mode, match type, party size, match timer, etc). Unfinished, expect bugs!
 
-<img width="250" height="127" alt="deadlock1" src="https://github.com/user-attachments/assets/04db86fa-7a8d-41eb-8311-44d65bd2ca0b" />  <img width="257" height="144" alt="deadlock3" src="https://github.com/user-attachments/assets/5e2fb80c-08b5-4d82-abfb-83d25a6d2c0e" /> <img width="273" height="137" alt="deadlock2" src="https://github.com/user-attachments/assets/02f94a24-3aa7-48a8-a028-7ae4b304f3f4" />
+<img width="261" height="133" alt="image" src="https://github.com/user-attachments/assets/bb411785-66f4-43ce-8c9e-d979f6ca7e96" /> <img width="281" height="130" alt="image" src="https://github.com/user-attachments/assets/1d872c8d-a10f-4807-89ea-3f5327471e4b" /> <img width="266" height="139" alt="image" src="https://github.com/user-attachments/assets/52f40fe4-fd2a-4abf-b404-280c84a50d8e" /> <img width="263" height="134" alt="image" src="https://github.com/user-attachments/assets/112f40b9-d8d4-40f2-afa1-9f950a7ab438" />
 
+
+
+ 
 ## Installation and Setup
 
+### Windows
+Download **DeadlockRPC.exe** from the [latest release](https://github.com/Jelloge/DeadlockRPC/releases/latest) and run it! It will show up in your taskbar.
 
-Download **DeadlockRPC.exe** from the [latest release](https://github.com/Jelloge/DeadlockRPC/releases/latest) and run it! 
+### Linux
+```bash
+git clone https://github.com/Jelloge/DeadlockRPC.git
+cd DeadlockRPC
+pip install -r requirements.txt
+cd src
+python main.py
+```
 
-It will show up in your taskbar. Make sure you launch the game USING this app, as it will automatically launch your game with '-condebug' via Steam so console logging is always enabled. '-condebug' is integral for this app to work.
+### Notes
+- The app launches Deadlock with `-condebug` automatically via Steam. `-condebug` is required for this app to work.
+- If you manage your own Steam launch options, add `-condebug` to them.
+<img width="480" height="119" alt="image" src="https://github.com/user-attachments/assets/21aaf748-3f15-41de-9479-d48b3b8eba6d" />
 
 If you need help, message me on Discord: boba
 
@@ -20,51 +35,39 @@ If you need help, message me on Discord: boba
 <summary>Building from source</summary>
 
 1. **Clone the repo**
-2. **Install dependencies** (Python 3.10+)
-3. **Configure** (optional)
-
-Edit `src/config.json` if needed:
-- `deadlock_install_path` set this if Deadlock isn't in a standard Steam library location
-- `update_interval_seconds` how often Discord presence refreshes default: 15s
-
-4. **Run**
-5. **Build the exe** (optional)
-
+2. **Install dependencies** - Python 3.10+ and `pip install -r requirements.txt`
+3. **Configure** (optional) - edit `src/config.json` if needed
+4. **Run** - `cd src && python main.py`
+5. **Build executable** (optional):
+```
 pip install pyinstaller
 python build.py
-
-Output: `dist/DeadlockRPC.exe`
+```
+Output: `dist/DeadlockRPC.exe` (Windows) or `dist/DeadlockRPC` (Linux)
 
 </details>
 
-## Linux/Mac Support
-
-Experimental Linux support was added !
-
-The app was built and tested on a Windows (and now Linux) platform, so currently Mac OS is unsupported.
-
 ## How It Works
 
-DeadlockRP monitors Deadlock's `console.log` file (written when the game runs with `-condebug`). It parses log events using regex patterns to detect game state changes that I painstakingly mapped out, and pushes updates to Disc.
+DeadlockRP monitors Deadlock's `console.log` file (written when the game runs with `-condebug`). It parses log events using regex patterns to detect game state changes that I painstakingly mapped out, and pushes updates to Discord.
 
 The game's runtime and memory are never touched. So it's VAC-safe and won't affect performance.
 
 ## Changelog & Recent Fixes
-- **Dynamic Hero Data**: Integrates with `deadlock-api.com`! Hero names are now fetched automatically so new heroes work instantly without manual code updates.
-- **Unique Hideout Text**: When in the hideout, your presence now displays hero-specific flavour text (e.g., *"Mixing Drinks in the Hideout"* for Infernus) instead of a generic string.
-- **Fixed IPC Port Conflicts**: The app now intelligently cycles through IPC pipes (`discord-ipc-0` to `-9`), fixing the bug where the presence would freeze or fail to display if you were running Spotify/Music presence at the same time.
-- **Fixed Queue Bug**: Addressed the issue where *"Looking for Match..."* wouldn't display when queuing in a party.
-- **Fixed Hero Detection**: Addressed issue where hero wouldn't update when entering a match.
-- **Fixed Match Detection**: Fixed matches being misclassified as a bot match.
-- **Fixed Party Tracking**
+- **Dynamic Hero Data**: Integrates with `deadlock-api.com` Hero names are now fetched automatically so new heroes work instantly without manual code updates
+- **Hideout Text**: When in the hideout, your presence now displays hero-specific flavour text (e.g., *"Mixing Drinks in the Hideout"* for Infernus)
+- **Fixed Queue Bug**: Addressed the issue where *"Looking for Match..."* wouldn't display when queuing in a party
+- **Fixed Hero Detection**: Hero now correctly updates when entering a match, the hideout hero is cleared on match entry so the actual in-match hero is shown. Also fixed hero swapping in Sandbox
+- **Fixed Match Detection**: Fixed standard and Street Brawl matches being misclassified as Bot Match due to placeholder bots loading before all players connect
+- **Party Tracking**: Real party size tracking using GC party events, party size now reflects actual members instead of being capped at 2
+- **Steam Path Detection**: Added Registry lookup so the app finds Deadlock regardless of where Steam is installed
+- **Linux Support**: Full Linux support via Proton. game detection, Steam library paths, and system tray all (should) work on Linux
 
 ## TO-DO
 
-- Dynamic portrait changes, for critical and gloating portraits. Recently implemented switches that will display Silver's wolf and human form, so I know that it's do-able
-- Upload new unreleased hero assets to the Discord app (names work via API, but images still require manual Dev Portal uploads).
+- Dynamic portrait changes, for critical and gloating portraits.
+- Upload new unreleased hero assets to the Discord app (names work via API, but images still require manual Dev Portal uploads)
 - Localization
-- Clean up code
-- Cross-platform stuff
 
 ## Known Bugs
 

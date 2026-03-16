@@ -425,22 +425,20 @@ class LogWatcher:
             if not (is_hideout and not self._hideout_loaded):
                 self._apply_hero_signal(m.group(1))
 
-        # Hero loading via VMDL (remote matches only, not hideout)
-        # Also handles Silver's wolf form swap
+        # Hero loading via VMDL
+        # handles Silver's wolf form swap
         elif m := self._match("client_hero_vmdl", line):
             hero_norm = m.group(1).lower()
             self._apply_hero_signal(hero_norm)
             if self.state.hero_key == "werewolf" and hero_norm == "werewolf":
                 self.state.is_transformed = "werewolf_transform" in line.lower()
 
-        # Silver wolf form from nonVMDL sources
         elif self._match("silver_wolf_form_on", line):
             self.state.is_transformed = True
 
         elif self._match("silver_wolf_form_off", line):
             self.state.is_transformed = False
 
-        # Disconnect = stay in POST_MATCH while loading back to hideout
         elif m := self._match("server_disconnect", line):
             reason = m.group(1)
             if "EXITING" in reason.upper():
@@ -481,7 +479,7 @@ class LogWatcher:
             if self.state.phase in (GamePhase.HIDEOUT, GamePhase.PARTY_HIDEOUT):
                 self.state.phase = GamePhase.PARTY_HIDEOUT if self.state.in_party else GamePhase.HIDEOUT
 
-        # Bot mode — only classify as BOT_MATCH if we haven't already
+        # Bot mode only classify as BOT_MATCH if we haven't already
         # identified the mode from player count (standard/street brawl
         # matches also have bots for lane creeps, jungle camps, etc.)
         elif m := self._match("bot_init", line):
@@ -513,8 +511,6 @@ class LogWatcher:
             self.state.reset()
 
         # Player info also get match mode from player count
-        # Standard 6v6: 12 online 6 coop bots
-        # Street Brawl 4v4: 8 online 4 coop bots
         elif m := self._match("player_info", line):
             if self.state.phase != GamePhase.SPECTATING:
                 self.state.player_count = int(m.group(1))
