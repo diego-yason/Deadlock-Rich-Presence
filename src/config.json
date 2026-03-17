@@ -7,6 +7,8 @@
 
     "process_names": ["project8.exe", "deadlock.exe", "project8"],
 
+    "launch_game": false,
+
     "update_interval_seconds": 15,
 
     "resync_max_bytes": 10485760,
