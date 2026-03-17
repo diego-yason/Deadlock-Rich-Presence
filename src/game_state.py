@@ -111,8 +111,6 @@ class GameState:
         if self.hero_key is None:
             return None
 
-        print("KS status", self.is_killstreaking, self.current_killstreak)
-
         key = self.hero_key.lower()
 
         # Silver (werewolf) transform swap
