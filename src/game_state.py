@@ -94,6 +94,7 @@ class GameState:
     player_count: int = 0
     bot_count: int = 0
     bot_difficulty: str | None = None
+    current_killstreak: int = 0
 
     @property
     def hero_display_name(self) -> str | None:
@@ -110,15 +111,31 @@ class GameState:
         if self.hero_key is None:
             return None
 
+        print("KS status", self.is_killstreaking, self.current_killstreak)
+
         key = self.hero_key.lower()
 
         # Silver (werewolf) transform swap
         if key in ("werewolf", "silver") and self.is_transformed:
-            return "hero_werewolf_wolf"
+            if self.is_killstreaking:
+                if self.is_killstreaking:
+                    return "hero_werewolf_wolf_gloat"
+                else:
+                    return "hero_werewolf_wolf"
 
         if _hero_store:
-            return _hero_store.asset_key(key)
-        return f"hero_{key}"
+            if self.is_killstreaking:
+                return f"{_hero_store.asset_key(key)}_gloat"
+            else:
+                return _hero_store.asset_key(key)
+        if self.is_killstreaking:
+            return f"hero_{key}_gloat"
+        else:
+            return f"hero_{key}"
+
+    @property
+    def is_killstreaking(self) -> bool:
+        return self.current_killstreak >= 3
 
     @property
     def hero_hideout_text(self) -> str:
@@ -204,6 +221,12 @@ class GameState:
             self.hero_key = normalized
             self.is_transformed = False  # reset form on hero change
 
+    def add_killStreak(self) -> None:
+        self.current_killstreak += 1
+    
+    def reset_killStreak(self) -> None:
+        self.current_killstreak = 0
+
     def set_party_size(self, size: int) -> None:
         self.party_size = max(1, size)
         if self.phase in (GamePhase.HIDEOUT, GamePhase.PARTY_HIDEOUT):
@@ -222,6 +245,7 @@ class GameState:
         self.is_transformed = False
         self.bot_count = 0
         self.bot_difficulty = None
+        self.current_killstreak = 0
 
     def reset(self) -> None:
         """Full reset when the game closes."""

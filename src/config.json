@@ -42,7 +42,8 @@
         "loop_mode_menu":       "LoopMode:\\s*menu",
         "lobby_created":        "Lobby\\s+\\d+\\s+for\\s+Match\\s+\\d+\\s+created",
         "lobby_destroyed":      "Lobby\\s+\\d+\\s+for\\s+Match\\s+\\d+\\s+destroyed",
-        "spectate_broadcast":   "Playing Broadcast"
+        "spectate_broadcast":   "Playing Broadcast",
+        "kill":                 "Killer: \\w+, Dying: \\w+, Number of Assisters: \\d+"
     },
 
     "hideout_maps": ["dl_hideout"],

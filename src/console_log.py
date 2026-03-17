@@ -338,6 +338,7 @@ class LogWatcher:
         old_mode = self.state.match_mode
         old_transformed = self.state.is_transformed
         old_party_size = self.state.party_size
+        old_killstreak = self.state.current_killstreak
         current_map = (self.state.map_name or "").lower()
         in_hideout_map = current_map in self.hideout_maps
 
@@ -533,12 +534,25 @@ class LogWatcher:
             if count > 0:
                 self._hideout_loaded = False
 
+        # kill detection
+        # BUG: If player (somehow) dies without player credit, it will not be detected.
+        elif m := self._match("kill", line):
+            killer, dying = re.findall(r"hero_\w+", m.group(0).lower())
+            killer = re.search(self.state.hero_key, killer)
+            dying = re.search(self.state.hero_key, dying)
+            
+            if killer:
+                self.state.add_killStreak()
+            elif dying:
+                self.state.reset_killStreak()
+
         return (
             self.state.phase != old_phase
             or self.state.hero_key != old_hero
             or self.state.match_mode != old_mode
             or self.state.is_transformed != old_transformed
             or self.state.party_size != old_party_size
+            or self.state.current_killstreak != old_killstreak
         )
 
     def _match(self, pattern_name: str, line: str) -> re.Match | None:
