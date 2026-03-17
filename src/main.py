@@ -279,9 +279,13 @@ def main():
 
     logger.info("Starting Deadlock Discord Rich Presence...")
 
-    # Launch Deadlock with -condebug
-    # logger.info("Launching Deadlock via Steam with -condebug...")
-    # launch_deadlock()
+    # Launch Deadlock with -condebug (can be disabled in config for users
+    # who manage their own Steam launch options)
+    if cfg.get("launch_game", True):
+        logger.info("Launching Deadlock via Steam with -condebug...")
+        launch_deadlock()
+    else:
+        logger.info("launch_game is disabled — make sure -condebug is in your Steam launch options.")
 
     app = DeadlockRPC(cfg)
 
