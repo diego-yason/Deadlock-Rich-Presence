@@ -83,13 +83,13 @@ class DiscordRPC:
         # Large image is the hero (or logo if no hero)
         p: dict = {
             "large_image": state.hero_asset_name or logo,
-            "large_text": "Deadlock", # Keep main tooltip simple
+            "large_text": state.hero_display_name,
         }
         
         # Add small image for the hero name to appear cleanly as a neat badge hover
         if state.hero_display_name:
             p["small_image"] = logo
-            p["small_text"] = state.hero_display_name
+            p["small_text"] = "Deadlock"
         if state.in_party:
             p["party_size"] = [state.party_size, PARTY_MAX]
 
