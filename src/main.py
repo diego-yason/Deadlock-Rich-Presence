@@ -280,8 +280,8 @@ def main():
     logger.info("Starting Deadlock Discord Rich Presence...")
 
     # Launch Deadlock with -condebug
-    logger.info("Launching Deadlock via Steam with -condebug...")
-    launch_deadlock()
+    # logger.info("Launching Deadlock via Steam with -condebug...")
+    # launch_deadlock()
 
     app = DeadlockRPC(cfg)
 
